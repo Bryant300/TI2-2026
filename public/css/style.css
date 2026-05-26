@@ -16,10 +16,7 @@ h1 {
 form {
     padding: 10px;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+
 }
 
 label {
