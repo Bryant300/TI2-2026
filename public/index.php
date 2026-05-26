@@ -21,18 +21,58 @@ require_once URL_BASE . "/model/guestbookModel.php";
  * Activez le mode d'erreur de PDO à Exception et
  * le mode fetch à tableau associatif
  */
+try {
 
+    $connexion = new PDO(
+        DB_DRIVER . ":host=" . DB_HOST . ";dbname=" . DB_NAME . ";port=" . DB_PORT . ";charset=" . DB_CHARSET,
+        DB_LOGIN,
+        DB_PWD
+    );
+
+    $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $connexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+
+    echo "Erreur de connexion à la base de données : " . $e->getMessage();
+    die();
+
+}
 /*
  * Si le formulaire a été soumis
  */
+if (
+    isset($_POST["firstname"], $_POST["message"])
+    && !empty($_POST["firstname"])
+    && !empty($_POST["message"])
+) { {
 
-// on appelle la fonction d'insertion dans la DB (addGuestbook())
+        addGuestbook(
 
-// si l'insertion a réussi
+            $connexion,
 
-// on redirige vers la page actuelle (ou on affiche un message de succès)
+            $_POST["firstname"],
 
-// sinon, on affiche un message d'erreur
+            $_POST["message"]
+
+        );
+
+    }
+    // on appelle la fonction d'insertion dans la DB (addGuestbook())
+
+    // si l'insertion a réussi
+
+    // on redirige vers la page actuelle (ou on affiche un message de succès)
+
+    // sinon, on affiche un message d'erreur
+}
+$guestbook =
+
+    getAllGuestbook(
+
+        $connexion
+
+    );
 
 /*
  * On récupère les messages du livre d'or
