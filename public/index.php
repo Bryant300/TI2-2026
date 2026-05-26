@@ -47,15 +47,7 @@ if (
     && !empty($_POST["message"])
 ) { {
 
-        addGuestbook(
 
-            $connexion,
-
-            $_POST["firstname"],
-
-            $_POST["message"]
-
-        );
 
     }
     // on appelle la fonction d'insertion dans la DB (addGuestbook())

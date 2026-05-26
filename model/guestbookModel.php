@@ -20,17 +20,23 @@
  * Une requête préparée est utilisée pour éviter les injections SQL
  * Les données sont échappées pour éviter les injections XSS (protection backend)
  */
-function addGuestbook(PDO $db,
-                    string $firstname,
-                    string $lastname,
-                    string $usermail,
-                    string $phone,
-                    string $postcode,
-                    string $message
-): bool
-{
+function addGuestbook(
+    PDO $db,
+    string $firstname,
+    string $lastname,
+    string $usermail,
+    string $phone,
+    string $postcode,
+    string $message
+): bool {
     // traitement des données backend (SECURITE)
-
+    $mail = filter_var($usermail, FILTER_VALIDATE_EMAIL);
+    # Le message ne peut avoir ni tags
+    $message = strip_tags($message);
+    # Ni espace avant / arrière
+    $message = trim($message);
+    # On encode les caractères dangereux en entités html
+    $message = htmlspecialchars($message);
     // si pas de données complètes ou ne correspondant pas à nos attentes, on renvoie false
     return false;
     // requête préparée obligatoire !
@@ -38,7 +44,10 @@ function addGuestbook(PDO $db,
     // si l'insertion a réussi
     // on renvoie true
     // sinon, on renvoie false
-
+    if ($mail === false || empty($message)) {
+        #Envoi de false et arrêt de la fonction
+        return false;
+    }
 }
 
 /***************************
@@ -55,11 +64,18 @@ function addGuestbook(PDO $db,
  */
 function getAllGuestbook(PDO $db): array
 {
+    $stmt = $db->query("SELECT * FROM `guestbook` ORDER BY `datemessage` DESC");
+    // On envoi un tableau avec les résultats 
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Bonne pratique
+    $stmt->closeCursor();
+    // Appel de la vue
+
     // try catch
     // si la requête a réussi,
     // bonne pratique, fermez le curseur
     // renvoyer le tableau de(s) message(s)
-    return [];
+    return [$db];
 }
 
 /**************************
@@ -74,7 +90,6 @@ function getAllGuestbook(PDO $db): array
  */
 function getNbTotalGuestbook(PDO $db): int
 {
-
     // bonne pratique, fermez le curseur,
     // renvoyez le nombre total de messages
     return 0;
@@ -92,7 +107,7 @@ function getNbTotalGuestbook(PDO $db): int
  * en utilisant une requête préparée (injection SQL), n'affiche que les messages
  * de la page courante
  */
-function getGuestbookPagination(PDO $db, int $pageActu=1, int $limit=5): array
+function getGuestbookPagination(PDO $db, int $pageActu = 1, int $limit = 5): array
 {
     // Requête préparée obligatoire !
     // Le $offset et le $limit sont des entiers, il faut donc les passer
@@ -115,12 +130,14 @@ function getGuestbookPagination(PDO $db, int $pageActu=1, int $limit=5): array
  * Fonction qui génère le code HTML de la pagination
  * si le nombre de pages est supérieur à une.
  */
-function pagination(int $nbtotalMessage, string $url="./?", string $get="page", int $pageActu=1, int $perPage=5 ): string
+function pagination(int $nbtotalMessage, string $url = "./?", string $get = "page", int $pageActu = 1, int $perPage = 5): string
 {
     $sortie = "";
-    if ($nbtotalMessage === 0) return "";
+    if ($nbtotalMessage === 0)
+        return "";
     $nbPages = ceil($nbtotalMessage / $perPage);
-    if ($nbPages == 1) return "";
+    if ($nbPages == 1)
+        return "";
     $sortie .= "<p>";
     for ($i = 1; $i <= $nbPages; $i++) {
         if ($i === 1) {

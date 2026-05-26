@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: rgba(137, 43, 226, 0.76);
+}
+
+h1 {
+    text-align: center;
+    margin: 20px;
+}
+
+form {
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+label {
+    margin: 10px;
+    color: aliceblue;
+    border: 2px solid rgba(0, 0, 0, 0.158);
+    padding: 5px;
+    border-radius: 20px;
+    box-shadow: 1px 1px 2px 1px rgba(255, 255, 255, 0.425);
+}
+
+input,
+textarea,
+button {
+    width: 30%;
+    height: 3em;
+    border-radius: 20px;
+    border-color: black;
+}
