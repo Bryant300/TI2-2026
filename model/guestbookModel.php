@@ -4,8 +4,31 @@
  * Model de la page livre d'or
  *******************************/
 
-// INSERTION d'un message dans le livre d'or
+// SELECTION de tous les messages du livre d'or
+/**
+ * @param PDO $db
+ * @return array
+ * Fonction qui récupère tous les messages depuis la table 'guestbook'
+ * Renvoie un tableau associatif avec tous les messages, triés du plus récent au plus ancien
+ */
+function getAllGuestbook(PDO $db): array
+{
+    try {
+        // Requête SQL pour récupérer tous les messages, du plus récent au plus ancien
+        $stmt = $db->query("SELECT * FROM `guestbook` ORDER BY `datemessage` DESC");
+        // On récupère tous les résultats sous forme de tableau associatif
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Bonne pratique : on ferme le curseur
+        $stmt->closeCursor();
+        // On renvoie le tableau des messages (vide si aucun message)
+        return $result;
+    } catch (PDOException $e) {
+        // En cas d'erreur SQL, on arrête le script et on affiche l'erreur
+        die("Erreur SQL (getAllGuestbook) : " . $e->getMessage());
+    }
+}
 
+// INSERTION d'un message dans le livre d'or
 /**
  * @param PDO $db
  * @param string $firstname
@@ -18,7 +41,7 @@
  * Fonction qui insère un message dans la base de données 'ti2web2026' et sa table 'guestbook'
  * Renvoie true si l'insertion a réussi, false sinon
  * Une requête préparée est utilisée pour éviter les injections SQL
- * Les données sont échappées pour éviter les injections XSS (protection backend)
+ * Les données sont nettoyées et validées pour la sécurité backend
  */
 function addGuestbook(
     PDO $db,
@@ -29,53 +52,82 @@ function addGuestbook(
     string $postcode,
     string $message
 ): bool {
-    // traitement des données backend (SECURITE)
-    $mail = filter_var($usermail, FILTER_VALIDATE_EMAIL);
-    # Le message ne peut avoir ni tags
-    $message = strip_tags($message);
-    # Ni espace avant / arrière
-    $message = trim($message);
-    # On encode les caractères dangereux en entités html
-    $message = htmlspecialchars($message);
-    // si pas de données complètes ou ne correspondant pas à nos attentes, on renvoie false
-    return false;
-    // requête préparée obligatoire !
+    // --- TRAITEMENT DES DONNÉES BACKEND (SÉCURITÉ) ---
 
-    // si l'insertion a réussi
-    // on renvoie true
-    // sinon, on renvoie false
-    if ($mail === false || empty($message)) {
-        #Envoi de false et arrêt de la fonction
+    // On supprime les espaces avant/arrière de tous les champs
+    $firstname = trim($firstname);
+    $lastname = trim($lastname);
+    $phone = trim($phone);
+    $postcode = trim($postcode);
+
+    // Le message ne peut avoir ni tags HTML
+    $message = strip_tags($message);
+    // Ni espaces avant/arrière
+    $message = trim($message);
+    // On encode les caractères spéciaux (protection XSS)
+    $message = htmlspecialchars($message);
+
+    // Validation de l'email : doit avoir un format valide
+    $mail = filter_var($usermail, FILTER_VALIDATE_EMAIL);
+
+    // --- VÉRIFICATIONS : si une donnée ne correspond pas à nos attentes, on renvoie false ---
+
+    // Prénom et nom obligatoires (max 100 caractères)
+    if (empty($firstname) || mb_strlen($firstname) > 100) {
         return false;
     }
-}
+    if (empty($lastname) || mb_strlen($lastname) > 100) {
+        return false;
+    }
 
-/***************************
- * Sans le Bonus Pagination
- **************************/
+    // Email invalide
+    if ($mail === false) {
+        return false;
+    }
 
-// SELECTION de messages dans le livre d'or par ordre de date croissante
-/**
- * @param PDO $db
- * @return array
- * Fonction qui récupère tous les messages du livre d'or par ordre de date croissante
- * venant de la base de données 'ti2web2026' et de la table 'guestbook'
- * Si pas de message, renvoie un tableau vide
- */
-function getAllGuestbook(PDO $db): array
-{
-    $stmt = $db->query("SELECT * FROM `guestbook` ORDER BY `datemessage` DESC");
-    // On envoi un tableau avec les résultats 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // Bonne pratique
-    $stmt->closeCursor();
-    // Appel de la vue
+    // Téléphone : optionnel mais si renseigné, ne doit contenir que des chiffres (max 20)
+    if (!empty($phone)) {
+        // On nettoie les espaces, tirets, points pour ne garder que les chiffres
+        $phoneClean = preg_replace('/[\s\-\.]/', '', $phone);
+        if (!ctype_digit($phoneClean) || mb_strlen($phoneClean) > 20) {
+            return false;
+        }
+        $phone = $phoneClean;
+    }
 
-    // try catch
-    // si la requête a réussi,
-    // bonne pratique, fermez le curseur
-    // renvoyer le tableau de(s) message(s)
-    return [$db];
+    // Code postal : exactement 4 chiffres (obligatoire selon le schéma DB : NOT NULL)
+    if (!preg_match('/^\d{4}$/', $postcode)) {
+        return false;
+    }
+
+    // Message obligatoire et max 500 caractères
+    if (empty($message) || mb_strlen($message) > 500) {
+        return false;
+    }
+
+    // --- INSERTION EN BASE DE DONNÉES ---
+    try {
+        // Requête préparée pour éviter les injections SQL
+        $stmt = $db->prepare(
+            "INSERT INTO guestbook (firstname, lastname, usermail, phone, postcode, message, datemessage)
+             VALUES (?, ?, ?, ?, ?, ?, NOW())"
+        );
+        $result = $stmt->execute([
+            $firstname,
+            $lastname,
+            $mail,
+            $phone,
+            $postcode,
+            $message
+        ]);
+        // Bonne pratique : on ferme le curseur
+        $stmt->closeCursor();
+        // On renvoie true si l'insertion a réussi, false sinon
+        return $result;
+    } catch (PDOException $e) {
+        // En cas d'erreur SQL, on arrête le script et on affiche l'erreur
+        die("Erreur SQL (addGuestbook) : " . $e->getMessage());
+    }
 }
 
 /**************************
@@ -90,36 +142,49 @@ function getAllGuestbook(PDO $db): array
  */
 function getNbTotalGuestbook(PDO $db): int
 {
-    // bonne pratique, fermez le curseur,
-    // renvoyez le nombre total de messages
-    return 0;
-
+    try {
+        $stmt = $db->query("SELECT COUNT(*) AS total FROM guestbook");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        return (int) ($result['total'] ?? 0);
+    } catch (PDOException $e) {
+        die("Erreur SQL (getNbTotalGuestbook) : " . $e->getMessage());
+    }
 }
-// SELECTION de messages dans le livre d'or par ordre de date croissante
-// en lien avec la pagination
+
+// SELECTION paginée des messages
 /**
  * @param PDO $db
- * @param int $pageActu = 1
- * @param int $limit = 5
+ * @param int $pageActu
+ * @param int $limit
  * @return array
- * Fonction qui récupère les messages du livre d'or par ordre de date croissante
- * venant de la base de données 'ti2web2026' et de la table 'guestbook'
- * en utilisant une requête préparée (injection SQL), n'affiche que les messages
- * de la page courante
+ * Fonction qui récupère les messages d'une page donnée (pagination)
  */
 function getGuestbookPagination(PDO $db, int $pageActu = 1, int $limit = 5): array
 {
-    // Requête préparée obligatoire !
-    // Le $offset et le $limit sont des entiers, il faut donc les passer
-    // en paramètres de la requête préparée en tant qu'entiers !
-    // si la requête a réussi,
-    // bonne pratique, fermez le curseur
-    // renvoyer le tableau de(s) message(s) (vide si pas de résultats)
-    return [];
+    // Calcul de l'offset pour la pagination
+    $offset = ($pageActu - 1) * $limit;
+
+    try {
+        // Requête préparée pour éviter les injections SQL
+        $stmt = $db->prepare(
+            "SELECT * FROM `guestbook` ORDER BY `datemessage` DESC LIMIT :limit OFFSET :offset"
+        );
+        // On lie les valeurs entières avec PDO::PARAM_INT
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Bonne pratique : on ferme le curseur
+        $stmt->closeCursor();
+        // On renvoie le tableau des messages (vide si aucun résultat)
+        return $result;
+    } catch (PDOException $e) {
+        die("Erreur SQL (getGuestbookPagination) : " . $e->getMessage());
+    }
 }
 
-# Pour afficher la pagination dans la vue
-// FONCTION de pagination
+// FONCTION de génération de la pagination HTML
 /**
  * @param int $nbtotalMessage
  * @param string $url
@@ -133,36 +198,48 @@ function getGuestbookPagination(PDO $db, int $pageActu = 1, int $limit = 5): arr
 function pagination(int $nbtotalMessage, string $url = "./?", string $get = "page", int $pageActu = 1, int $perPage = 5): string
 {
     $sortie = "";
+
+    // Si aucun message, on ne génère rien
     if ($nbtotalMessage === 0)
         return "";
+
+    // Calcul du nombre total de pages
     $nbPages = ceil($nbtotalMessage / $perPage);
+
+    // Si une seule page, pas besoin de pagination
     if ($nbPages == 1)
         return "";
+
     $sortie .= "<p>";
+
     for ($i = 1; $i <= $nbPages; $i++) {
         if ($i === 1) {
+            // Première page
             if ($pageActu === 1) {
+                // On est sur la première page : liens désactivés
                 $sortie .= "<< < 1 |";
             } elseif ($pageActu === 2) {
-                $sortie .= " <a href='$url'><<</a> <a href='$url'><</a> <a href='$url'>1</a> |";
+                $sortie .= " <a href='{$url}'><<</a> <a href='{$url}'><</a> <a href='{$url}'>1</a> |";
             } else {
-                $sortie .= " <a href='$url'><<</a> <a href='$url&$get=" . ($pageActu - 1) . "'><</a> <a href='$url'>1</a> |";
+                $sortie .= " <a href='{$url}'><<</a> <a href='{$url}&{$get}=" . ($pageActu - 1) . "'><</a> <a href='{$url}'>1</a> |";
             }
         } elseif ($i < $nbPages) {
+            // Pages intermédiaires
             if ($i === $pageActu) {
                 $sortie .= "  $i |";
             } else {
-                $sortie .= "  <a href='$url&$get=$i'>$i</a> |";
+                $sortie .= "  <a href='{$url}&{$get}=$i'>$i</a> |";
             }
         } else {
-            if ($pageActu >= $nbPages) {
+            // Dernière page
+            if ($i === $pageActu) {
                 $sortie .= "  $nbPages > >>";
             } else {
-                $sortie .= "  <a href='$url&$get=$nbPages'>$nbPages</a> <a href='$url&$get=" . ($pageActu + 1) . "'>></a> <a href='$url&$get=$nbPages'>>></a>";
+                $sortie .= "  <a href='{$url}&{$get}=$nbPages'>$nbPages</a> <a href='{$url}&{$get}=" . ($pageActu + 1) . "'>></a> <a href='{$url}&{$get}=$nbPages'>>></a>";
             }
         }
     }
+
     $sortie .= "</p>";
     return $sortie;
-
 }

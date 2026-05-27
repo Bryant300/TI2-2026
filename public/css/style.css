@@ -25,14 +25,14 @@
     --border: #e0dbd2;
     --text: #1a1714;
     --text-muted: #6b6560;
-    --accent: #b5451b;
+    --accent: #b51b8f;
     --accent-hover: #8f3415;
     --success-bg: #eaf7ec;
     --success-text: #1a5c26;
     --error-bg: #fdecea;
     --error-text: #8b1a1a;
     --input-bg: #faf9f7;
-    --input-focus: #b5451b;
+    --input-focus: #b51b8f;
     --shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
     --radius: 6px;
     --font-display: 'Playfair Display', Georgia, serif;
@@ -49,14 +49,14 @@ body.dark-mode {
     --border: #2e2c28;
     --text: #ede9e1;
     --text-muted: #8a857d;
-    --accent: #e06a40;
-    --accent-hover: #c95530;
+    --accent: #b51b8f;
+    --accent-hover: #b51b8f;
     --success-bg: #0f2614;
     --success-text: #6fcf87;
     --error-bg: #2a0f0f;
     --error-text: #f08080;
     --input-bg: #131210;
-    --input-focus: #e06a40;
+    --input-focus: #b51b8f;
     --shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
 }
 
@@ -166,13 +166,11 @@ h3 {
 .feedback.success {
     background: var(--success-bg);
     color: var(--success-text);
-    border-left: 4px solid var(--success-text);
 }
 
 .feedback.error {
     background: var(--error-bg);
     color: var(--error-text);
-    border-left: 4px solid var(--error-text);
 }
 
 /* --------------------------------------------------------------------------
@@ -189,14 +187,12 @@ h3 {
 #messages.error {
     background: var(--error-bg);
     color: var(--error-text);
-    border-left: 4px solid var(--error-text);
     padding: 0.85rem 1.2rem;
 }
 
 #messages.success {
     background: var(--success-bg);
     color: var(--success-text);
-    border-left: 4px solid var(--success-text);
     padding: 0.85rem 1.2rem;
 }
 

@@ -152,10 +152,10 @@ $(document).ready(function () {
 
     if ($("body").hasClass("dark-mode")) {
       // On est maintenant en mode sombre → proposer de revenir au clair
-      $(this).text("☀️ White Mode");
+      $(this).text("Light Mode");
     } else {
       // On est en mode clair → proposer de passer en sombre
-      $(this).text("🌙 Dark Mode");
+      $(this).text("Dark Mode");
     }
   });
 
@@ -227,38 +227,38 @@ $(document).ready(function () {
 
     if (!validateName(firstname)) {
       errors.push(
-        "⚠️ Le prénom est obligatoire et doit contenir au moins 2 caractères.",
+        "Le prénom est obligatoire et doit contenir au moins 2 caractères.",
       );
     }
 
     if (!validateName(lastname)) {
       errors.push(
-        "⚠️ Le nom est obligatoire et doit contenir au moins 2 caractères.",
+        "Le nom est obligatoire et doit contenir au moins 2 caractères.",
       );
     }
 
     if (usermail.trim() === "") {
-      errors.push("⚠️ L'adresse email est obligatoire.");
+      errors.push("L'adresse email est obligatoire.");
     } else if (!validateEmail(usermail)) {
-      errors.push("⚠️ L'adresse email n'est pas valide.");
+      errors.push("L'adresse email n'est pas valide.");
     }
 
     if (!validatePostcode(postcode)) {
       errors.push(
-        "⚠️ Le code postal doit être composé de 4 chiffres et être compris entre 1000 et 9999.",
+        "Le code postal doit être composé de 4 chiffres et être compris entre 1000 et 9999.",
       );
     }
 
     if (!validatePhone(phone)) {
       errors.push(
-        "⚠️ Le numéro de téléphone belge n'est pas valide (ex : 0470 12 34 56 ou +32 470 12 34 56).",
+        "Le numéro de téléphone belge n'est pas valide (ex : 0470 12 34 56 ou +32 470 12 34 56).",
       );
     }
 
     if (message.trim() === "") {
-      errors.push("⚠️ Le message est obligatoire.");
+      errors.push("Le message est obligatoire.");
     } else if (!validateMessage(message)) {
-      errors.push("⚠️ Le message doit contenir au moins 10 caractères.");
+      errors.push("Le message doit contenir au moins 10 caractères.");
     }
 
     if (errors.length > 0) {
@@ -274,7 +274,7 @@ $(document).ready(function () {
         300,
       );
     } else {
-      showMessage("✅ Données valides — envoi en cours…", "success");
+      showMessage("Données valides — envoi en cours…", "success");
 
       setTimeout(function () {
         $("#guestbook-form").off("submit").submit();

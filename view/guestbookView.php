@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>TI2 | Livre d'or</title>
-    <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="stylesheet" href="css/style.css">
     <script src="js/jquery-3.7.1.min.js"></script>
 </head>
@@ -20,8 +19,8 @@
         $paginationHtml = ''; ?>
 
     <header>
-        <h1>📖 Livre d'or</h1>
-        <button id="toggle-theme">🌙 Dark Mode</button>
+        <h1>Livre d'or</h1>
+        <button id="toggle-theme"> Dark Mode</button>
     </header>
 
     <main>
@@ -35,6 +34,7 @@
         <!-- Formulaire d'ajout d'un message -->
         <section class="form-section">
             <h2>Laisser un message</h2>
+
 
             <!-- Zone de messages d'erreur / succès jQuery -->
             <div id="messages"></div>
@@ -60,14 +60,14 @@
                             value="<?= isset($_POST['usermail']) ? htmlspecialchars($_POST['usermail']) : '' ?>">
                     </div>
                     <div class="form-group">
-                        <label for="phone">Téléphone belge <span class="optional">(optionnel)</span></label>
-                        <input type="tel" id="phone" name="phone" placeholder="Ex : 0470 12 34 56"
+                        <label for="phone">Téléphone belge <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="Ex : 0470123456"
                             value="<?= isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : '' ?>">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="postcode">Code postal belge</label>
+                    <label for="postcode">Code postal belge <span class="required">*</span></label>
                     <input type="number" id="postcode" name="postcode" placeholder="Ex : 1000" min="1000" max="9999"
                         title="Le code postal belge doit être un nombre entre 1000 et 9999"
                         value="<?= isset($_POST['postcode']) ? htmlspecialchars($_POST['postcode']) : '' ?>">
@@ -83,12 +83,14 @@
                     </span>
                 </div>
 
-                <button type="submit" class="submit-btn">✉️ Publier le message</button>
+                <button type="submit" class="submit-btn"> Publier le message</button>
             </form>
         </section>
 
         <!-- Section d'affichage des messages -->
         <section class="messages-section">
+            <h2>Les messages précédents</h2>
+
             <?php
             $nb = count($guestbook);
             if ($nb === 0): ?>
@@ -113,12 +115,14 @@
                                     <?= htmlspecialchars($entry['lastname']) ?>
                                 </strong>
                                 <em class="entry-date">
-                                    <?= htmlspecialchars(
-                                        date('d/m/Y à H\hi', strtotime($entry['datemessage']))
-                                    ) ?>
+                                    <?php
+                                    // Format français demandé : "Le ( 27/04/2026 à 10h29 )"
+                                    echo 'Le ( ' . date('d/m/Y à H\hi', strtotime($entry['datemessage'])) . ' )';
+                                    ?>
                                 </em>
                             </div>
                             <p class="entry-message">
+                                <!-- nl2br active le retour automatique à la ligne (Bonus) -->
                                 <?= nl2br(htmlspecialchars($entry['message'])) ?>
                             </p>
                         </li>
@@ -137,7 +141,7 @@
 
 
     <script>
-        // Initialize character counter on page load
+        // Compteur de caractères : mise à jour au chargement de la page
         document.addEventListener('DOMContentLoaded', function () {
             var textarea = document.getElementById('message');
             var counter = document.getElementById('char-counter');
