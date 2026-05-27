@@ -26,19 +26,16 @@
     </header>
 
     <main>
-        <!-- Zone de feedback (succès / erreur après soumission PHP) -->
         <?php if (!empty($feedbackMessage)): ?>
             <div class="feedback <?= htmlspecialchars($feedbackType) ?>">
                 <?= htmlspecialchars($feedbackMessage) ?>
             </div>
         <?php endif; ?>
 
-        <!-- Formulaire d'ajout d'un message -->
         <section class="form-section">
             <h2>Laisser un message</h2>
 
 
-            <!-- Zone de messages d'erreur / succès jQuery -->
             <div id="messages"></div>
 
             <form id="guestbook-form" method="POST" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
@@ -79,7 +76,6 @@
                     <label for="message">Votre message <span class="required">*</span></label>
                     <textarea id="message" name="message" rows="5" maxlength="300"
                         placeholder="Ce que vous avez pensé de votre visite..."><?= isset($_POST['message']) ? htmlspecialchars($_POST['message']) : '' ?></textarea>
-                    <!-- Compteur de caractères (Bonus) -->
                     <span id="char-counter" class="char-counter">
                         <?= isset($_POST['message']) ? mb_strlen($_POST['message']) : 0 ?> / 300 caractères
                     </span>
@@ -89,7 +85,6 @@
             </form>
         </section>
 
-        <!-- Section d'affichage des messages -->
         <section class="messages-section">
             <h2>Les messages précédents</h2>
 
@@ -103,10 +98,8 @@
                 <h3>Il y a <?= $nbTotalMessages ?> message<?= $nbTotalMessages > 1 ? 's' : '' ?></h3>
             <?php endif; ?>
 
-            <!-- Pagination en haut (BONUS) -->
             <?= $paginationHtml ?>
 
-            <!-- Liste des messages -->
             <?php if ($nb > 0): ?>
                 <ul class="guestbook-list">
                     <?php foreach ($guestbook as $entry): ?>
@@ -118,13 +111,11 @@
                                 </strong>
                                 <em class="entry-date">
                                     <?php
-                                    // Format français demandé : "Le ( 27/04/2026 à 10h29 )"
                                     echo 'Le ( ' . date('d/m/Y à H\hi', strtotime($entry['datemessage'])) . ' )';
                                     ?>
                                 </em>
                             </div>
                             <p class="entry-message">
-                                <!-- nl2br active le retour automatique à la ligne (Bonus) -->
                                 <?= nl2br(htmlspecialchars($entry['message'])) ?>
                             </p>
                         </li>
@@ -132,7 +123,6 @@
                 </ul>
             <?php endif; ?>
 
-            <!-- Pagination en bas (BONUS) -->
             <?= $paginationHtml ?>
         </section>
     </main>
@@ -143,7 +133,6 @@
 
 
     <script>
-        // Compteur de caractères : mise à jour au chargement de la page
         document.addEventListener('DOMContentLoaded', function () {
             var textarea = document.getElementById('message');
             var counter = document.getElementById('char-counter');
