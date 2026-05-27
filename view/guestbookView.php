@@ -1,5 +1,4 @@
 <?php
-# view/guestbookView.php
 ?>
 <!doctype html>
 <html lang="fr">
@@ -8,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>TI2 | Livre d'or</title>
+    <title>TI2</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/jquery-3.7.1.min.js"></script>
 </head>
@@ -19,8 +18,11 @@
         $paginationHtml = ''; ?>
 
     <header>
-        <h1>Livre d'or</h1>
+        <h1>TI2 2026 </h1>
+        <img src="https://tse2.mm.bing.net/th/id/OIP.1QEo143gogvxQ2jKRLRNwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+            alt="Logo TI2" class="logo">
         <button id="toggle-theme"> Dark Mode</button>
+
     </header>
 
     <main>
@@ -136,7 +138,7 @@
     </main>
 
     <footer>
-        <p>TI2 Web 2026 &mdash; Livre d'or</p>
+        <p>TI2 Web 2026 &mdash;Bryan Benois </p>
     </footer>
 
 

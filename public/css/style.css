@@ -208,7 +208,13 @@ h3 {
 
 #messages ul li {
     padding: 0.2rem 0;
-    
+
+}
+
+header img.logo {
+    height: 80px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* --------------------------------------------------------------------------
