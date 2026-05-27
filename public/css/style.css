@@ -119,6 +119,7 @@ header h1 {
     border-color: var(--accent);
     color: var(--accent);
     box-shadow: none;
+    transform: translateY(-1px);
 }
 
 /* --------------------------------------------------------------------------
