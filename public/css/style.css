@@ -101,7 +101,7 @@ header h1 {
    TOGGLE DARK MODE BUTTON
    -------------------------------------------------------------------------- */
 #toggle-theme {
-    background: transparent;
+    background: rgba(77, 77, 77, 0.048);
     border: 1.5px solid var(--border);
     color: var(--text);
     padding: 0.45rem 1rem;
@@ -110,11 +110,14 @@ header h1 {
     font-size: 0.9rem;
     cursor: pointer;
     transition: all var(--transition);
+    box-shadow: 1px 1px 1px rgb(174, 0, 255);
+
 }
 
 #toggle-theme:hover {
     border-color: var(--accent);
     color: var(--accent);
+    box-shadow: none;
 }
 
 /* --------------------------------------------------------------------------
