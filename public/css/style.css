@@ -1,38 +1,388 @@
-* {
+/* ============================================================================
+   style.css — TI2 Livre d'or
+   Thème : éditorial propre, typographie soignée, dark mode natif
+   ============================================================================ */
+
+/* --------------------------------------------------------------------------
+   IMPORTS & RESET
+   -------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&display=swap');
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
+/* --------------------------------------------------------------------------
+   VARIABLES (mode clair par défaut)
+   -------------------------------------------------------------------------- */
+:root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --border: #e0dbd2;
+    --text: #1a1714;
+    --text-muted: #6b6560;
+    --accent: #b5451b;
+    --accent-hover: #8f3415;
+    --success-bg: #eaf7ec;
+    --success-text: #1a5c26;
+    --error-bg: #fdecea;
+    --error-text: #8b1a1a;
+    --input-bg: #faf9f7;
+    --input-focus: #b5451b;
+    --shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    --radius: 6px;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --transition: 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+   DARK MODE — classe toggleée par jQuery
+   -------------------------------------------------------------------------- */
+body.dark-mode {
+    --bg: #0e0d0b;
+    --surface: #1a1815;
+    --border: #2e2c28;
+    --text: #ede9e1;
+    --text-muted: #8a857d;
+    --accent: #e06a40;
+    --accent-hover: #c95530;
+    --success-bg: #0f2614;
+    --success-text: #6fcf87;
+    --error-bg: #2a0f0f;
+    --error-text: #f08080;
+    --input-bg: #131210;
+    --input-focus: #e06a40;
+    --shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   BASE
+   -------------------------------------------------------------------------- */
 body {
-    background-color: rgba(137, 43, 226, 0.76);
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    transition: background-color var(--transition), color var(--transition);
+    min-height: 100vh;
 }
 
-h1 {
-    text-align: center;
-    margin: 20px;
+/* --------------------------------------------------------------------------
+   HEADER
+   -------------------------------------------------------------------------- */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background var(--transition), border-color var(--transition);
 }
 
-form {
-    padding: 10px;
-    text-align: center;
+header h1 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+}
 
+/* --------------------------------------------------------------------------
+   TOGGLE DARK MODE BUTTON
+   -------------------------------------------------------------------------- */
+#toggle-theme {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+#toggle-theme:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   MAIN LAYOUT
+   -------------------------------------------------------------------------- */
+main {
+    max-width: 780px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+}
+
+section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    transition: background var(--transition), border-color var(--transition);
+}
+
+h2 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+}
+
+h3 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+}
+
+/* --------------------------------------------------------------------------
+   FEEDBACK (PHP)
+   -------------------------------------------------------------------------- */
+.feedback {
+    padding: 0.85rem 1.2rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.feedback.success {
+    background: var(--success-bg);
+    color: var(--success-text);
+    border-left: 4px solid var(--success-text);
+}
+
+.feedback.error {
+    background: var(--error-bg);
+    color: var(--error-text);
+    border-left: 4px solid var(--error-text);
+}
+
+/* --------------------------------------------------------------------------
+   MESSAGES JQUERY
+   -------------------------------------------------------------------------- */
+#messages {
+    padding: 0;
+    border-radius: var(--radius);
+    margin-bottom: 1.2rem;
+    font-size: 0.92rem;
+    transition: all var(--transition);
+}
+
+#messages.error {
+    background: var(--error-bg);
+    color: var(--error-text);
+    border-left: 4px solid var(--error-text);
+    padding: 0.85rem 1.2rem;
+}
+
+#messages.success {
+    background: var(--success-bg);
+    color: var(--success-text);
+    border-left: 4px solid var(--success-text);
+    padding: 0.85rem 1.2rem;
+}
+
+#messages ul {
+    list-style: none;
+    padding: 0;
+}
+
+#messages ul li {
+    padding: 0.2rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   FORM
+   -------------------------------------------------------------------------- */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 540px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
 }
 
 label {
-    margin: 10px;
-    color: aliceblue;
-    border: 2px solid rgba(0, 0, 0, 0.158);
-    padding: 5px;
-    border-radius: 20px;
-    box-shadow: 1px 1px 2px 1px rgba(255, 255, 255, 0.425);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
 }
 
-input,
-textarea,
-button {
-    width: 30%;
-    height: 3em;
-    border-radius: 20px;
-    border-color: black;
+.required {
+    color: var(--accent);
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.97rem;
+    padding: 0.6rem 0.85rem;
+    outline: none;
+    transition: border-color var(--transition), background var(--transition);
+    width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+    border-color: var(--input-focus);
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* --------------------------------------------------------------------------
+   COMPTEUR DE CARACTÈRES (Bonus)
+   -------------------------------------------------------------------------- */
+.char-counter {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 0.3rem;
+    transition: color var(--transition);
+}
+
+.char-counter.danger {
+    color: var(--error-text);
+    font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   SUBMIT BUTTON
+   -------------------------------------------------------------------------- */
+.submit-btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.7rem 1.8rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition), transform 0.1s;
+}
+
+.submit-btn:hover {
+    background: var(--accent-hover);
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+/* --------------------------------------------------------------------------
+   GUESTBOOK LIST
+   -------------------------------------------------------------------------- */
+.guestbook-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.guestbook-entry {
+    border-top: 1px solid var(--border);
+    padding: 1.1rem 0;
+    transition: border-color var(--transition);
+}
+
+.guestbook-entry:last-child {
+    border-bottom: 1px solid var(--border);
+}
+
+.entry-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.entry-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--accent);
+}
+
+.entry-date {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.entry-message {
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 0.97rem;
+}
+
+/* --------------------------------------------------------------------------
+   PAGINATION
+   -------------------------------------------------------------------------- */
+.messages-section p {
+    text-align: center;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.messages-section p a {
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0 0.3em;
+    font-weight: 600;
+}
+
+.messages-section p a:hover {
+    text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   FOOTER
+   -------------------------------------------------------------------------- */
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    transition: border-color var(--transition);
 }
