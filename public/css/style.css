@@ -95,6 +95,7 @@ header h1 {
     font-size: 1.75rem;
     color: var(--accent);
     letter-spacing: -0.02em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* --------------------------------------------------------------------------
@@ -110,7 +111,7 @@ header h1 {
     font-size: 0.9rem;
     cursor: pointer;
     transition: all var(--transition);
-    box-shadow: 1px 1px 1px rgb(174, 0, 255);
+    box-shadow: 1px 1px 1px rgb(238, 238, 238);
 
 }
 
