@@ -1,4 +1,5 @@
 <?php
+# view/guestbookView.php
 ?>
 <!doctype html>
 <html lang="fr">
@@ -7,144 +8,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>TI2</title>
+    <title>TI2 | Livre d'or</title>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/jquery-3.7.1.min.js"></script>
 </head>
 
 <body>
-
-    <?php if (!isset($paginationHtml))
-        $paginationHtml = ''; ?>
-
-    <header>
-        <h1>TI2 2026 </h1>
-        <img src="https://tse2.mm.bing.net/th/id/OIP.1QEo143gogvxQ2jKRLRNwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
-            alt="Logo TI2" class="logo">
-        <button id="toggle-theme"> Dark Mode</button>
-
+    <header class="site-header">
+        <div>
+            <p class="site-kicker">Projet TI2</p>
+            <h1>Livre d'or</h1>
+        </div>
+        <button type="button" id="toggle-theme">Dark Mode</button>
     </header>
 
-    <main>
-        <?php if (!empty($feedbackMessage)): ?>
-            <div class="feedback <?= htmlspecialchars($feedbackType) ?>">
-                <?= htmlspecialchars($feedbackMessage) ?>
-            </div>
-        <?php endif; ?>
-
+    <main class="page">
+        <a class="anchor-link" href="#messages-section">
+            <img class="ancre" src="img/chat.png" alt="Aller aux commentaires">
+        </a>
         <section class="form-section">
-            <h2>Laisser un message</h2>
+            <h2>Ajouter un message</h2>
 
+            <?php if (!empty($info)): ?>
+                <p class="alert success"><?= htmlspecialchars($info) ?></p>
+            <?php endif; ?>
 
-            <div id="messages"></div>
+            <?php if (!empty($error)): ?>
+                <p class="alert error"><?= htmlspecialchars($error) ?></p>
+            <?php endif; ?>
 
-            <form id="guestbook-form" method="POST" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="firstname">Prénom <span class="required">*</span></label>
-                        <input type="text" id="firstname" name="firstname" placeholder="Ex : Marie"
-                            value="<?= isset($_POST['firstname']) ? htmlspecialchars($_POST['firstname']) : '' ?>">
+            <form method="post" action="" id="guestbook-form" novalidate>
+                <div id="messages"></div>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="firstname">Prenom</label>
+                        <input type="text" name="firstname" id="firstname"
+                            value="<?= htmlspecialchars($_POST["firstname"] ?? "") ?>">
                     </div>
-                    <div class="form-group">
-                        <label for="lastname">Nom <span class="required">*</span></label>
-                        <input type="text" id="lastname" name="lastname" placeholder="Ex : Dupont"
-                            value="<?= isset($_POST['lastname']) ? htmlspecialchars($_POST['lastname']) : '' ?>">
+
+                    <div class="field">
+                        <label for="lastname">Nom</label>
+                        <input type="text" name="lastname" id="lastname"
+                            value="<?= htmlspecialchars($_POST["lastname"] ?? "") ?>">
+                    </div>
+
+                    <div class="field">
+                        <label for="usermail">Email</label>
+                        <input type="email" name="usermail" id="usermail"
+                            value="<?= htmlspecialchars($_POST["usermail"] ?? "") ?>">
+                    </div>
+
+                    <div class="field">
+                        <label for="phone">Telephone</label>
+                        <input type="text" name="phone" id="phone" placeholder="0470 12 34 56"
+                            value="<?= htmlspecialchars($_POST["phone"] ?? "") ?>">
+                    </div>
+
+                    <div class="field">
+                        <label for="postcode">Code postal</label>
+                        <input type="text" name="postcode" id="postcode" maxlength="4"
+                            value="<?= htmlspecialchars($_POST["postcode"] ?? "") ?>">
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="usermail">Email <span class="required">*</span></label>
-                        <input type="email" id="usermail" name="usermail" placeholder="Ex : marie.dupont@example.be"
-                            value="<?= isset($_POST['usermail']) ? htmlspecialchars($_POST['usermail']) : '' ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Téléphone belge <span class="required">*</span></label>
-                        <input type="tel" id="phone" name="phone" placeholder="Ex : 0470123456"
-                            value="<?= isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : '' ?>">
-                    </div>
+                <div class="field">
+                    <label for="message">Message</label>
+                    <textarea name="message" id="message"
+                        maxlength="300"><?= htmlspecialchars($_POST["message"] ?? "") ?></textarea>
+                    <p id="message-counter">0 / 300 caracteres</p>
                 </div>
 
-                <div class="form-group">
-                    <label for="postcode">Code postal belge <span class="required">*</span></label>
-                    <input type="number" id="postcode" name="postcode" placeholder="Ex : 1000" min="1000" max="9999"
-                        title="Le code postal belge doit être un nombre entre 1000 et 9999"
-                        value="<?= isset($_POST['postcode']) ? htmlspecialchars($_POST['postcode']) : '' ?>">
-                </div>
-
-                <div class="form-group">
-                    <label for="message">Votre message <span class="required">*</span></label>
-                    <textarea id="message" name="message" rows="5" maxlength="300"
-                        placeholder="Ce que vous avez pensé de votre visite..."><?= isset($_POST['message']) ? htmlspecialchars($_POST['message']) : '' ?></textarea>
-                    <span id="char-counter" class="char-counter">
-                        <?= isset($_POST['message']) ? mb_strlen($_POST['message']) : 0 ?> / 300 caractères
-                    </span>
-                </div>
-
-                <button type="submit" class="submit-btn"> Publier le message</button>
+                <button type="submit" class="submit-button">Envoyer</button>
             </form>
         </section>
 
-        <section class="messages-section">
-            <h2>Les messages précédents</h2>
-
-            <?php
-            $nb = count($guestbook);
-            if ($nb === 0): ?>
-                <h3>Pas encore de message — soyez le premier !</h3>
-            <?php elseif ($nb === 1): ?>
-                <h3>Il y a 1 message</h3>
+        <section class="messages-section" id="messages-section">
+            <?php if ($nbTotalMessages === 0): ?>
+                <h2>Pas encore de message</h2>
+            <?php elseif ($nbTotalMessages === 1): ?>
+                <h2>Il y a 1 message</h2>
             <?php else: ?>
-                <h3>Il y a <?= $nbTotalMessages ?> message<?= $nbTotalMessages > 1 ? 's' : '' ?></h3>
+                <h2>Il y a <?= $nbTotalMessages ?> messages</h2>
             <?php endif; ?>
 
-            <?= $paginationHtml ?>
+            <?php if (!empty($messages)): ?>
 
-            <?php if ($nb > 0): ?>
+
                 <ul class="guestbook-list">
-                    <?php foreach ($guestbook as $entry): ?>
-                        <li class="guestbook-entry">
-                            <div class="entry-header">
-                                <strong class="entry-name">
-                                    <?= htmlspecialchars($entry['firstname']) ?>
-                                    <?= htmlspecialchars($entry['lastname']) ?>
-                                </strong>
-                                <em class="entry-date">
-                                    <?php
-                                    echo 'Le ( ' . date('d/m/Y à H\hi', strtotime($entry['datemessage'])) . ' )';
-                                    ?>
-                                </em>
-                            </div>
-                            <p class="entry-message">
-                                <?= nl2br(htmlspecialchars($entry['message'])) ?>
+                    <?php foreach ($messages as $msg): ?>
+                        <li class="guestbook-item">
+                            <p class="guestbook-author">
+                                <?= htmlspecialchars($msg["firstname"]) ?>
+                                <?= htmlspecialchars($msg["lastname"]) ?>
                             </p>
+                            <p class="guestbook-date"><?= htmlspecialchars($msg["datemessage"]) ?></p>
+                            <p class="guestbook-message"><?= nl2br(htmlspecialchars($msg["message"])) ?></p>
                         </li>
                     <?php endforeach; ?>
                 </ul>
-            <?php endif; ?>
 
-            <?= $paginationHtml ?>
+                <?= $pagination ?>
+            <?php endif; ?>
         </section>
     </main>
 
-    <footer>
-        <p>TI2 Web 2026 &mdash;Bryan Benois </p>
-    </footer>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var textarea = document.getElementById('message');
-            var counter = document.getElementById('char-counter');
-            if (textarea && counter) {
-                var updateCounter = function () {
-                    counter.textContent = textarea.value.length + ' / 300 caractères';
-                };
-                updateCounter();
-                textarea.addEventListener('input', updateCounter);
-            }
-        });
-    </script>
     <script src="js/validation.js"></script>
 </body>
 
