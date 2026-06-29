@@ -99,6 +99,7 @@ function getGuestbookPagination(PDO $db, int $pageActu = 1, int $limit = 5): arr
     }
 }
 
+<<<<<<< Updated upstream
 function pagination(
     int $nbtotalMessage,
     string $url = "./?",
@@ -107,6 +108,17 @@ function pagination(
     int $perPage = 5,
     string $anchor = ""
 ): string
+=======
+/**
+ * @param int $nbtotalMessage
+ * @param string $url
+ * @param string $get
+ * @param int $pageActu
+ * @param int $perPage
+ * @return string
+ */
+function pagination(int $nbtotalMessage, string $url = "./?", string $get = "page", int $pageActu = 1, int $perPage = 5): string
+>>>>>>> Stashed changes
 {
     if ($nbtotalMessage === 0) return "";
 
